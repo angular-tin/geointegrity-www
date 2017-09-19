@@ -14,10 +14,6 @@ $mail = new PHPMailer(true);
 // Tell PHPMailer to use SMTP
 $mail->isSMTP();
 
-// Replace sender@example.com with your "From" address.
-// This address must be verified with Amazon SES.
-$mail->setFrom('sender@example.com', 'Sender Name');
-
 // Replace recipient@example.com with a "To" address. If your account
 // is still in the sandbox, this address must be verified.
 // Also note that you can include several addAddress() lines to send
@@ -72,6 +68,9 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
         $data['success'] = false;
         $data['errors']  = $errors;
     } else {
+        // Replace sender@example.com with your "From" address.
+        // This address must be verified with Amazon SES.
+        $mail->setFrom($email, $name);
 
         // The subject line of the email
         $mail->Subject = "Message from $subjectPrefix";
