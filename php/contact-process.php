@@ -1,46 +1,13 @@
 <?php
-// Import PHPMailer classes into the global namespace
-// These must be at the top of your script, not inside a function
 use PHPMailer\PHPMailer\PHPMailer;
 
-// Modify the path in the require statement below to refer to the
-// location of your Composer autoload.php file.
 require_once '../vendor/autoload.php';
 
-// Instantiate a new PHPMailer
-$mail = new PHPMailer;
-
-// Tell PHPMailer to use SMTP
-$mail->isSMTP();
-
-// Replace recipient@example.com with a "To" address. If your account
-// is still in the sandbox, this address must be verified.
-// Also note that you can include several addAddress() lines to send
-// email to multiple recipients.
-$mail->addAddress('magdalena.gonzalez@geointegrity.com', 'Magdalena Gonzalez - GeoIntegrity');
-$mail->addReplyTo('magdalena.gonzalez@geointegrity.com', 'Magdalena Gonzalez - GeoIntegrity');
-
-// Replace smtp_username with your Amazon SES SMTP user name.
-$mail->Username = 'AKIAJFO7ACH5R7GRUHQA';
-
-// Replace smtp_password with your Amazon SES SMTP password.
-$mail->Password = 'At+hixEplzjygepMYCGQEhuXw8K7c1ikDatX60TFfAxb';
-
-// Specify a configuration set. If you do not want to use a configuration
-// set, comment or remove the next line.
-// $mail->addCustomHeader('X-SES-CONFIGURATION-SET', 'ConfigSet');
-
-// If you're using Amazon SES in a region other than US West (Oregon),
-// replace email-smtp.us-west-2.amazonaws.com with the Amazon SES SMTP
-// endpoint in the appropriate region.
-$mail->Host = 'email-smtp.us-west-2.amazonaws.com';
-
-// The port you will connect to on the Amazon SES SMTP endpoint.
-$mail->Port = 465;
-
-// Configure your Subject Prefix and Recipient here
-$subjectPrefix = 'GeoIntegrity - Website - Contact Form';
-$emailTo       = 'magdalena.gonzalez@geointegrity.com';
+// send and reply settings
+$sendToAddress = 'magdalena.gonzalez@geointegrity.com';
+$sendToName = 'Magdalena Gonzalez - GeoIntegrity';
+$replyToAddress = 'magdalena.gonzalez@geointegrity.com';
+$replyToName = 'Magdalena Gonzalez - GeoIntegrity';
 
 $errors = array(); // array to hold validation errors
 $data   = array(); // array to pass back data
@@ -63,37 +30,33 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['message'] = 'Message is required.';
     }
 
-    // if there are any errors in our errors array, return a success boolean or false
     if (!empty($errors)) {
         $data['success'] = false;
         $data['errors']  = $errors;
     } else {
-        // Replace sender@example.com with your "From" address.
-        // This address must be verified with Amazon SES.
+
+        $mail = new PHPMailer;
+        $mail->isSMTP();
+        $mail->SMTPAuth = true;
+        $mail->Username = 'AKIAJFO7ACH5R7GRUHQA';
+        $mail->Password = 'At+hixEplzjygepMYCGQEhuXw8K7c1ikDatX60TFfAxb';
+        $mail->Host = 'email-smtp.us-west-2.amazonaws.com';
+        $mail->Port = 465;
+        $mail->SMTPSecure = 'ssl';
+
+        $mail->addAddress($sendToAddress, $sendToName);
+        $mail->addReplyTo($replyToAddress, $replyToName);
         $mail->setFrom($email, $name);
 
-        // The subject line of the email
-        $mail->Subject = "Message from $subjectPrefix";
+        $mail->Subject = "Message from GeoIntegrity - Website - Contact Form";
 
-        // The HTML-formatted body of the email
+        $mail->isHTML(true);
         $mail->Body = '
             <strong>Name: </strong>'.$name.'<br />
             <strong>Email: </strong>'.$email.'<br />
             <strong>Message: </strong>'.nl2br($message).'<br />
         ';
 
-        // Tells PHPMailer to use SMTP authentication
-        $mail->SMTPAuth = true;
-
-        // Enable SSL encryption
-        $mail->SMTPSecure = 'ssl';
-
-        // Tells PHPMailer to send HTML-formatted email
-        $mail->isHTML(true);
-
-        // The alternative email body; this is only displayed when a recipient
-        // opens the email in a non-HTML email client. The \r\n represents a
-        // line break.
         $mail->AltBody = "Name: $name\r\nEmail: $email\r\nMessage: $message";
 
         if(!$mail->send()) {
@@ -105,6 +68,5 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // return all our data to an AJAX call
     echo json_encode($data);
 }
