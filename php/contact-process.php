@@ -1,4 +1,11 @@
 <?php
+require_once 'Mail.php';
+
+$host = "ssl://email-smtp.us-west-2.amazonaws.com";
+$port = "465";
+$username = 'AKIAJFO7ACH5R7GRUHQA';
+$password = 'At+hixEplzjygepMYCGQEhuXw8K7c1ikDatX60TFfAxb';
+
 // Configure your Subject Prefix and Recipient here
 $subjectPrefix = 'GeoIntegrity - Website - Contact Form';
 $emailTo       = 'magdalena.gonzalez@geointegrity.com';
@@ -36,21 +43,34 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
             <strong>Message: </strong>'.nl2br($message).'<br />
         ';
 
-        $headers  = "MIME-Version: 1.1" . PHP_EOL;
-        $headers .= "Content-type: text/html; charset=utf-8" . PHP_EOL;
-        $headers .= "Content-Transfer-Encoding: 8bit" . PHP_EOL;
-        $headers .= "Date: " . date('r', $_SERVER['REQUEST_TIME']) . PHP_EOL;
-        $headers .= "Message-ID: <" . $_SERVER['REQUEST_TIME'] . md5($_SERVER['REQUEST_TIME']) . '@' . $_SERVER['SERVER_NAME'] . '>' . PHP_EOL;
-        $headers .= "From: " . "=?UTF-8?B?".base64_encode($name)."?=" . " <$email> " . PHP_EOL;
-        $headers .= "Return-Path: $emailTo" . PHP_EOL;
-        $headers .= "Reply-To: $email" . PHP_EOL;
-        $headers .= "X-Mailer: PHP/". phpversion() . PHP_EOL;
-        $headers .= "X-Originating-IP: " . $_SERVER['SERVER_ADDR'] . PHP_EOL;
+        $headers = array();
+        $headers['MIME-Version'] = '1.1';
+        $headers['Content-type'] = 'text/html; charset=utf-8';
+        $headers['Content-Transfer-Encoding'] = '8bit';
+        $headers['Date'] = date('r', $_SERVER['REQUEST_TIME']);
+        $headers['Message-ID'] = '<' . $_SERVER['REQUEST_TIME'] . md5($_SERVER['REQUEST_TIME']) . '@' . $_SERVER['SERVER_NAME'] . '>';
+        $headers['From'] = $name . ' <' . $email . '> ';
+        $headers['Return-Path'] = $emailTo;
+        $headers['Reply-To'] = $email;
+        $headers['X-Mailer'] = 'PHP/'. phpversion();
+        $headers['X-Originating-IP'] = $_SERVER['SERVER_ADDR'];
 
-        mail($emailTo, "=?utf-8?B?" . base64_encode($subject) . "?=", $body, $headers);
+        $smtp = Mail::factory('smtp',
+          array ('host' => $host,
+            'port' => $port,
+            'auth' => true,
+            'username' => $username,
+            'password' => $password));
 
-        $data['success'] = true;
-        $data['confirmation'] = 'Congratulations. Your message has been sent successfully';
+        $mail = $smtp->send($emailTo, $headers, $body);
+
+        if (PEAR::isError($mail)) {
+          $data['success'] = false;
+          $data['errors']  = $mail->getMessage();
+        } else {
+          $data['success'] = true;
+          $data['confirmation'] = 'Congratulations. Your message has been sent successfully';
+        }
     }
 
     // return all our data to an AJAX call
