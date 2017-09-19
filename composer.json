@@ -1,0 +1,6 @@
+{
+    "name": "bitnami/htdocs",
+    "require": {
+        "phpmailer/phpmailer": "^6.0"
+    }
+}
