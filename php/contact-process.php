@@ -72,18 +72,16 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
         $data['success'] = false;
         $data['errors']  = $errors;
     } else {
-        $subject = "Message from $subjectPrefix";
-        $body    = '
+
+        // The subject line of the email
+        $mail->Subject = "Message from $subjectPrefix";
+
+        // The HTML-formatted body of the email
+        $mail->Body = '
             <strong>Name: </strong>'.$name.'<br />
             <strong>Email: </strong>'.$email.'<br />
             <strong>Message: </strong>'.nl2br($message).'<br />
         ';
-
-        // The subject line of the email
-        $mail->Subject = $subject;
-
-        // The HTML-formatted body of the email
-        $mail->Body = $body;
 
         // Tells PHPMailer to use SMTP authentication
         $mail->SMTPAuth = true;
