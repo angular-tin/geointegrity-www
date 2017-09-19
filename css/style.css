@@ -648,15 +648,10 @@ input:focus::-webkit-contacts-auto-fill-button {
 
 .message {
   padding: 15px;
-  background-color: #333;
 }
 
 .error.message {
   background-color: #c0392b;
-}
-
-.message {
-  background-color: #2E7D32;
 }
 
 label.message-text {
