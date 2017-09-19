@@ -6,8 +6,8 @@ require_once '../vendor/autoload.php';
 // send and reply settings
 $sendToAddress = 'magdalena.gonzalez@geointegrity.com';
 $sendToName = 'Magdalena Gonzalez - GeoIntegrity';
-$replyToAddress = 'magdalena.gonzalez@geointegrity.com';
-$replyToName = 'Magdalena Gonzalez - GeoIntegrity';
+$sendFromAddress = 'magdalena.gonzalez@geointegrity.com';
+$sendFromName = 'Magdalena Gonzalez - GeoIntegrity';
 
 $errors = array(); // array to hold validation errors
 $data   = array(); // array to pass back data
@@ -45,10 +45,10 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mail->SMTPSecure = 'ssl';
 
         $mail->addAddress($sendToAddress, $sendToName);
-        $mail->addReplyTo($replyToAddress, $replyToName);
-        $mail->setFrom($email, $name);
+        $mail->addReplyTo($email, $name);
+        $mail->setFrom($sendFromAddress, $sendFromName);
 
-        $mail->Subject = "Message from GeoIntegrity - Website - Contact Form";
+        $mail->Subject = "Message from $name <$email>: GeoIntegrity - Website - Contact Form";
 
         $mail->isHTML(true);
         $mail->Body = '
