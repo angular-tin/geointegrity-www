@@ -2,14 +2,13 @@
 // Import PHPMailer classes into the global namespace
 // These must be at the top of your script, not inside a function
 use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
 
 // Modify the path in the require statement below to refer to the
 // location of your Composer autoload.php file.
 require_once '../vendor/autoload.php';
 
 // Instantiate a new PHPMailer
-$mail = new PHPMailer(true);
+$mail = new PHPMailer;
 
 // Tell PHPMailer to use SMTP
 $mail->isSMTP();
