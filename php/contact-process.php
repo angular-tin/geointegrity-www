@@ -17,7 +17,8 @@ $mail->isSMTP();
 // is still in the sandbox, this address must be verified.
 // Also note that you can include several addAddress() lines to send
 // email to multiple recipients.
-$mail->addAddress('lablancas@gmail.com', 'Lucas Blancas');
+$mail->addAddress('magdalena.gonzalez@geointegrity.com', 'Magdalena Gonzalez - GeoIntegrity');
+$mail->addReplyTo('magdalena.gonzalez@geointegrity.com', 'Magdalena Gonzalez - GeoIntegrity');
 
 // Replace smtp_username with your Amazon SES SMTP user name.
 $mail->Username = 'AKIAJFO7ACH5R7GRUHQA';
